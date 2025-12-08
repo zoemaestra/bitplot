@@ -1,0 +1,109 @@
+# Default .gitignore
+
+# Gcode
+*.gcode
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+Icon?
+
+# Temporary files
+*.swp
+*~
+*.tmp
+*.temp
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+.venv/
+venv/
+ENV/
+env/
+pipenv/
+Pipfile.lock
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+.python-version
+.pytest_cache/
+.mypy_cache/
+.coverage
+.tox/
+
+# Node
+node_modules/
+dist/
+build/
+.cache/
+.next/
+.nuxt/
+out/
+
+# Java / Maven / Gradle
+*.class
+*.jar
+*.war
+*.ear
+target/
+build/
+.gradle/
+
+# Go
+bin/
+pkg/
+*.exe
+
+# Rust
+target/
+
+# Ruby
+*.gem
+*.rbc
+.bundle/
+vendor/bundle/
+log/
+tmp/
+
+# IDEs / Editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.iml
+
+# Archives / packages
+*.7z
+*.zip
+*.tar.gz
+*.rar
+*.gz
+
+# Containers
+docker-compose.override.yml
+.env.docker
+
+# Coverage reports
+coverage/
+htmlcov/
+
+# Misc
+coverage.xml
+*.seed
+*.cover
