@@ -2,7 +2,7 @@ from PIL import Image
 import base64
 from io import BytesIO
 
-speed = 1000 # Velocity (mm/s)
+speed = 4000 # Velocity (mm/s)
 accel = 1000 # Acceleration (mm/s^2)
 tipsize = 0.3 # Size (mm) of pen tip
 origin = (0,0) # Origin point of drawing on paper
@@ -15,7 +15,7 @@ origin = (0,0) # Origin point of drawing on paper
 # 1.0 = pen tip completely overlapping adjacent pixels
 overlap = 0.0
 
-img = Image.open("test2.bmp")
+img = Image.open("dithered-image.png")
 img = img.convert('RGB')
 print(f"Image size: {img.size}")
 papersize = input("Enter X*Y paper size: ")
@@ -66,7 +66,7 @@ for colour in colours:
     file.write(f"M204 S{accel} ; Set acceleration\n")
     file.write(f"G1 Z5 F{speed} ; Lift pen\n")
     file.write(f"G1 X0 Y0 F{speed} ; Move to origin\n")
-    file.write(f"G1 E1 ; Necessary extrude to make file valid in the eyes of prusaslicer")
+    file.write(f"G1 E1 ; Necessary extrude to make file valid in the eyes of prusaslicer\n")
 
     if tipsize < pixelSize or pixelSizeOffset != 0:
         for i in range(img.size[0]):

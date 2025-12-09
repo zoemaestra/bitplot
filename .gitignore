@@ -3,6 +3,8 @@
 # Gcode
 *.gcode
 
+*.png
+
 # OS files
 .DS_Store
 Thumbs.db
