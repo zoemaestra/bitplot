@@ -1,6 +1,6 @@
 from PIL import Image, ImageOps
 import base64
-from io import BytesIO
+import io
 
 speed = 4000 # Velocity (mm/s)
 accel = 1000 # Acceleration (mm/s^2)
@@ -16,6 +16,18 @@ origin = (0,0) # Origin point of drawing on paper
 overlap = 0.0
 
 img = Image.open("dithered-image.png")
+
+base_width = 300
+wpercent = (base_width / float(img.size[0]))
+hsize = int((float(img.size[1]) * float(wpercent)))
+img300 = img.resize((base_width, hsize), Image.Resampling.LANCZOS)
+
+imgmem = io.BytesIO()
+img300.save(imgmem, format = "PNG")
+imgbytes = imgmem.getvalue()
+imgb64 = base64.b64encode(imgbytes)
+imgb64 = imgb64.decode('ascii')
+
 img = ImageOps.flip(img)
 img = img.convert('RGB')
 print(f"Image size: {img.size}")
@@ -93,8 +105,8 @@ for colour in colours:
             for j in range(img.size[1]):
                 pixel = img.getpixel((i, j))
                 if pixel == colour:
-                    x = round(i / pixelSize, 2)
-                    y = round(j / pixelSize, 2)
+                    x = round(i * pixelSize, 2)
+                    y = round(j * pixelSize, 2)
                     file.write(f"G1 X{x} Y{y} F{speed}\n")
                     file.write(f"G1 Z0 F{speed}\n")
                     file.write(f"G1 Z5 F{speed}\n")
