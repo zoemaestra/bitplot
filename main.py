@@ -5,6 +5,7 @@ from io import BytesIO
 speed = 1000 # Velocity (mm/s)
 accel = 1000 # Acceleration (mm/s^2)
 tipsize = 0.3 # Size (mm) of pen tip
+origin = (0,0) # Origin point of drawing on paper
 
 # Shrinks pixels by the size of the pen tip to try
 # and prevent the pen from slightly overlapping other pixels
@@ -14,17 +15,18 @@ tipsize = 0.3 # Size (mm) of pen tip
 # 1.0 = pen tip completely overlapping adjacent pixels
 overlap = 0.0
 
-img = Image.open("test.bmp")
+img = Image.open("test2.bmp")
 img = img.convert('RGB')
 print(f"Image size: {img.size}")
 papersize = input("Enter X*Y paper size: ")
 paperX = int(papersize.split('*')[0])
 paperY = int(papersize.split('*')[1])
 
-margin = input("Enter minimum margin size: ")
+margin = input("Enter margin size: ")
 margin = int(margin)
 
-minsize = min(paperX, paperY) - margin
+minsize = min(paperX, paperY) - (margin*2)
+
 pixelSize = min(img.size[0], img.size[1]) / minsize
 
 print(f"Pixel size: {round(pixelSize, 2)}mm^2")
@@ -72,8 +74,8 @@ for colour in colours:
                 pixel = img.getpixel((i, j))
                 if pixel == colour:
                     pixelDraw = pixelSize + pixelSizeOffset
-                    x = round(i / pixelSize, 2)
-                    y = round(j / pixelSize, 2)
+                    x = round(i / pixelSize, 2) + margin + origin[0]
+                    y = round(j / pixelSize, 2) + margin + origin[1]
                     file.write(f"G1 X{x-(pixelDraw/2)} Y{y-(pixelDraw/2)} F{speed}\n")
                     file.write(f"G1 Z0 F{speed}\n")
                     file.write(f"G1 X{x+(pixelDraw/2)} Y{y-(pixelDraw/2)} F{speed}\n")
