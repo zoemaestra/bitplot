@@ -4,7 +4,7 @@ import io
 
 speed = 4000 # Velocity (mm/s)
 accel = 1000 # Acceleration (mm/s^2)
-tipsize = 0.3 # Size (mm) of pen tip
+tipsize = 0.7 # Size (mm) of pen tip
 origin = (0,0) # Origin point of drawing on paper
 
 # Shrinks pixels by the size of the pen tip to try
@@ -31,6 +31,7 @@ imgb64 = imgb64.decode('ascii')
 img = ImageOps.flip(img)
 img = img.convert('RGB')
 print(f"Image size: {img.size}")
+tipsize = float(input("Enter pen tip size (mm): "))
 papersize = input("Enter X*Y paper size: ")
 paperX = int(papersize.split('*')[0])
 paperY = int(papersize.split('*')[1])
@@ -105,8 +106,8 @@ for colour in colours:
             for j in range(img.size[1]):
                 pixel = img.getpixel((i, j))
                 if pixel == colour:
-                    x = round(i * pixelSize, 2)
-                    y = round(j * pixelSize, 2)
+                    x = round((i*pixelSize) + margin + origin[0], 2)
+                    y = round((j*pixelSize) + margin + origin[1], 2)
                     file.write(f"G1 X{x} Y{y} F{speed}\n")
                     file.write(f"G1 Z0 F{speed}\n")
                     file.write(f"G1 Z5 F{speed}\n")
