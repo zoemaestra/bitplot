@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, ImageOps
 import base64
 from io import BytesIO
 
@@ -10,12 +10,13 @@ origin = (0,0) # Origin point of drawing on paper
 # Shrinks pixels by the size of the pen tip to try
 # and prevent the pen from slightly overlapping other pixels
 # Only applies when the pixel size is larger than the tip size
-# -1.0 = pen tip entirely detached from adjacent pixels
+# 1.0 = pen tip entirely detached from adjacent pixels
 # 0.0 = pen tip midpoint touching adjacent pixels
-# 1.0 = pen tip completely overlapping adjacent pixels
+# -1.0 = pen tip completely overlapping adjacent pixels
 overlap = 0.0
 
 img = Image.open("dithered-image.png")
+img = ImageOps.flip(img)
 img = img.convert('RGB')
 print(f"Image size: {img.size}")
 papersize = input("Enter X*Y paper size: ")
@@ -27,9 +28,9 @@ margin = int(margin)
 
 minsize = min(paperX, paperY) - (margin*2)
 
-pixelSize = min(img.size[0], img.size[1]) / minsize
+pixelSize = round(minsize / min(img.size[0], img.size[1]),2)
 
-print(f"Pixel size: {round(pixelSize, 2)}mm^2")
+print(f"Pixel size: {pixelSize}mm^2")
 
 colours = set()
 for i in range(img.size[0]):
@@ -40,6 +41,7 @@ for i in range(img.size[0]):
 print('Colour count = ', len(colours))
 
 input("Generate gcode? (press enter to continue)")
+print()
 pixelSizeOffset = tipsize * overlap if tipsize < pixelSize else 0
 
 for colour in colours:
@@ -73,15 +75,18 @@ for colour in colours:
             for j in range(img.size[1]):
                 pixel = img.getpixel((i, j))
                 if pixel == colour:
-                    pixelDraw = pixelSize + pixelSizeOffset
-                    x = round(i / pixelSize, 2) + margin + origin[0]
-                    y = round(j / pixelSize, 2) + margin + origin[1]
-                    file.write(f"G1 X{x-(pixelDraw/2)} Y{y-(pixelDraw/2)} F{speed}\n")
+                    #pixelSizeOffset
+                    pixelDraw = round((pixelSize)/2,2)
+
+                    x = round((i*pixelSize) + margin + origin[0], 2)
+                    y = round((j*pixelSize) + margin + origin[1], 2)
+
+                    file.write(f"G1 X{(x-pixelDraw)+pixelSizeOffset} Y{(y-pixelDraw)+pixelSizeOffset} F{speed}\n")
                     file.write(f"G1 Z0 F{speed}\n")
-                    file.write(f"G1 X{x+(pixelDraw/2)} Y{y-(pixelDraw/2)} F{speed}\n")
-                    file.write(f"G1 X{x+(pixelDraw/2)} Y{y+(pixelDraw/2)} F{speed}\n")
-                    file.write(f"G1 X{x-(pixelDraw/2)} Y{y+(pixelDraw/2)} F{speed}\n")
-                    file.write(f"G1 X{x-(pixelDraw/2)} Y{y-(pixelDraw/2)} F{speed}\n")
+                    file.write(f"G1 X{(x+pixelDraw)-pixelSizeOffset} Y{(y-pixelDraw)+pixelSizeOffset} F{speed}\n")
+                    file.write(f"G1 X{(x+pixelDraw)-pixelSizeOffset} Y{(y+pixelDraw)-pixelSizeOffset} F{speed}\n")
+                    file.write(f"G1 X{(x-pixelDraw)+pixelSizeOffset} Y{(y+pixelDraw)-pixelSizeOffset} F{speed}\n")
+                    file.write(f"G1 X{(x-pixelDraw)+pixelSizeOffset} Y{(y-pixelDraw)+pixelSizeOffset} F{speed}\n")
                     file.write(f"G1 Z5 F{speed}\n")
     else:
         for i in range(img.size[0]):
